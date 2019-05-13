@@ -1,0 +1,96 @@
+package com.challenge;
+
+import java.io.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Scanner;
+
+public class Triangle implements IGeometricalFigure {
+
+    private int size;
+    private ArrayList<Double> dimensionList = null;
+
+    public Triangle() {
+
+        Properties prop = new Properties();
+        String propFileName = "resources/config.properties";
+        InputStream inputStream;
+
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+
+            if (inputStream != null) {
+                prop.load(inputStream);
+            } else {
+                throw new FileNotFoundException("Property file '" + propFileName + "' not found in the classpath");
+            }
+
+            // get the property value from config file
+            int sizeProp = sizeProp = Integer.parseInt(prop.getProperty("triangleSize"));
+            size = sizeProp;
+
+
+            //get dimensions values as user input
+            Scanner scanner = new Scanner(System.in);
+
+            double dim = 0.0d;
+            int i = 1;
+
+            this.dimensionList = new ArrayList<Double>(sizeProp);
+            while (i <= sizeProp) {
+
+                System.out.println("Please insert dimension number " + i + ":");
+
+                try {
+                    dim = scanner.nextDouble();
+
+                    this.dimensionList.add(i - 1, dim);
+                    i++;
+                } catch (Exception e) {
+                    System.out.println("Dimension is invalid, please try again!");
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public ArrayList<Double> getDimensionList() {
+        return dimensionList;
+    }
+
+    @Override
+    public void determineType(ArrayList<Double> dimensions) {
+
+        // check if the triangle is isosceles, equilateral, scalene or invalid
+        if ((double) dimensions.get(0) + (double) dimensions.get(1) < (double) dimensions.get(2) ||
+                (double) dimensions.get(0) + (double) dimensions.get(2) < (double) dimensions.get(1) ||
+                (double) dimensions.get(1) + (double) dimensions.get(2) < (double) dimensions.get(2)) {
+
+            System.out.println("Not a valid triangle.");
+
+        } else if (Double.compare(dimensions.get(0), dimensions.get(1)) == 0 &&
+                Double.compare(dimensions.get(0), dimensions.get(2)) == 0) {
+
+            System.out.println("The triangle is equilateral.");
+
+        } else if (Double.compare(dimensions.get(0), dimensions.get(1)) == 0 ||
+                Double.compare(dimensions.get(0), dimensions.get(2)) == 0 ||
+                Double.compare(dimensions.get(1), dimensions.get(2)) == 0) {
+
+            System.out.println("The triangle is isosceles.");
+
+        } else {
+            System.out.println("The triangle is scalene.");
+        }
+
+    }
+}
